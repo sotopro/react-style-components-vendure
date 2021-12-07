@@ -1,7 +1,7 @@
-import {  GET_ALL_PRODUCTS} from '../graphql/queries';
+import {  GET_ALL_PRODUCTS} from '../../graphql/queries';
 import  { useQuery } from '@apollo/client';
-import { Products } from './Products'
-import { Container, Dot } from './ProductList.style';
+import { Products } from '../Products'
+import { Container, Dot } from './style';
 export const ProductList = () =>{
   const {data, error, loading} = useQuery(GET_ALL_PRODUCTS);
   console.log(data);

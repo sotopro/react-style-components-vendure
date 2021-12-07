@@ -1,8 +1,10 @@
 import {FC, useState} from 'react';
+import { Header } from '../Header';
 import { useMutation, useQuery } from '@apollo/client';
-import {GET_ACTIVE_ORDER, ADD_TO_CART } from '../graphql/index';
-import type { ProductsNode, Product } from '../types/index'
-import { Container, CardActionArea, CardMedia, CardContent, CardActions, Typography, Button } from './Products.style';
+import {GET_ACTIVE_ORDER, ADD_TO_CART } from '../../graphql/index';
+import type { ProductsNode, Product } from '../../types/index'
+import { Container, CardActionArea, CardMedia, CardContent, CardActions, Typography, Button } from './style';
+import { useStateWithStorage } from '../../hooks/useStateWithStorage';
 
 interface Props {
     className?: string
@@ -11,11 +13,13 @@ interface Props {
 
 export const Products: FC<Props> = ({products}) => {
     const [allItems, setAllItems] = useState([]);
+    const [order, setOrder] = useStateWithStorage("ORDER", "");
   const { items } = products;
   const { loading, error, data } = useQuery(GET_ACTIVE_ORDER);
   let list: Product[] | any = [];
     const [addItemToOrder] = useMutation(ADD_TO_CART, {
         update: (cache, mutationResult) => {
+          console.log({cache, mutationResult});
           const { activeOrder } = cache.readQuery<any>({
             query: GET_ACTIVE_ORDER,
           });
@@ -33,17 +37,20 @@ export const Products: FC<Props> = ({products}) => {
         },
       });
     const addProduts = async (id : number) => {
-        await addItemToOrder({
+        const result = await addItemToOrder({
           variables: {
             productVariantId: Number(id),
-            quantity: 2,
+            quantity: 1,
           },
         });
+        setOrder(result.data.addItemToOrder);
       };
     if(products === null) {
         return <div>No products found</div>
     }
     return (
+      <>
+      <Header data={order}/>
       <Container>
         {items.map((item : Product) => {
           const imgUrl = item.assets[0].source;
@@ -62,15 +69,16 @@ export const Products: FC<Props> = ({products}) => {
                     <Typography variant='content'>
                       {item.description}
                     </Typography>
+                    <Typography variant='content'>
+                      {`${item.variants[0].currencyCode} ${item.variants[0].price}`}
+                    </Typography>
                   </CardContent>
                 </CardActionArea>
                 <CardActions>
                   <Button
                     type='button'
                     color='primary'
-                    onClick={() => {
-                      addProduts(item.variants[0].productId);
-                    }}
+                    onClick={() => addProduts(item.variants[0].id)}
                   >
                     Add To Cart
                   </Button>
@@ -79,5 +87,6 @@ export const Products: FC<Props> = ({products}) => {
           );
         })}
       </Container>
+      </>
     )
 }

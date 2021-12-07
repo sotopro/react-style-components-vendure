@@ -1,4 +1,5 @@
 export type ProductVariant = {
+    id: number;
     product: Product;
     productId: number;
     createdAt: Date

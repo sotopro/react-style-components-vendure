@@ -16,7 +16,6 @@ export const ORDER_FRAGMENT = gql`
       }
       unitPriceWithTax
       quantity
-      totalPrice
       featuredAsset {
         id
         preview

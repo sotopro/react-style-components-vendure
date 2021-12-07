@@ -13,7 +13,7 @@ export const Container = styled.section`
     flex-wrap: wrap;
     .card-item {
         width: 30%;
-        height: 440px;
+        height: auto;
         padding: 20px;
         display: flex;
         flex-direction: column;
@@ -24,6 +24,7 @@ export const Container = styled.section`
 export const CardActionArea = styled.div`
 `;
 export const CardMedia = styled.img`
+    border-radius: 6px;
     min-width: 100%;
     object-fit: cover;
     vertical-align: bottom;
